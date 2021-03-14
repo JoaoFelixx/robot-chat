@@ -7,29 +7,49 @@ body {
 }
 
 .grid {
-  
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 20px 10px;
 }
 
 .box-left {
-  position: relative;
-  text-align: end;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
-  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  position: relative;
   padding: 4px;
-  background-color: rgb(255,255,255);
+  background-color: rgb(255, 255, 255);
 }
 
 .box-right {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
-  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
   position: relative;
+  text-align: end;
   top: 30px;
   padding: 4px;
-  background-color: rgb(255,255,255);
+  background-color: rgb(255, 255, 255);
 }
 
+input {
+  position: relative;
+  float: right;
+  top: 60vh;
+  height: 20px;
+  width: 70%;
+}
+
+button {
+  position: relative;
+  float: right;
+  top: 60vh;
+  height: 25px;
+}
+
+label {
+  position: relative;
+  float: right;
+  top: 60vh;
+  height: 25px;
+}
