@@ -1,24 +1,17 @@
-window.onload = start;
-
-async function start() { // cria um nome fixo para usuario
+window.onload = () => {
   if (localStorage.getItem("username")) {
     document.getElementById('welcome').innerHTML = `Olá ${localStorage.getItem("username")} !`;
-    return true
+    return true;
   }
 
   let name = prompt('Digite seu nome !');
 
-  if (name == null || name == '') {
-    name = 'Usuario'
-  }
-  if (name.length < 4) {
-    alert('Usuario não pode ter menos de 4 caracteres')
-  }
+  name == null || name == '' ? name = 'Usuario' : true;
 
   localStorage.setItem("username", name);
   document.getElementById('welcome').innerHTML = `Olá ${localStorage.getItem("username")}`;
-
 }
+
 
 // --------------
 
@@ -29,7 +22,7 @@ async function connectionWithRobot(database) { // transforma o json em Array par
     return await result;
   }
   catch (error) {
-    throw console.warn('Erro ao ler arquivo .json');
+    throw console.error('Erro ao ler arquivo .json', error);
   }
 
 }
@@ -43,48 +36,60 @@ async function startRobot(database) { // pega o array anterior por uma promise
 //----------------
 
 document.getElementById('send').onclick = async () => {
-  const message        = document.getElementById('userSend').value;
+  const message = document.getElementById('userSend').value;
   const messageToRobot = message.toLowerCase().replace(/\s/g, '');
 
-  cleanAndCreate(message)
-  robotRequest(messageToRobot);
+  cleanCreateAndRemove(message);
+
+  if (message.indexOf('?') > 0)
+    robotResponse(messageToRobot, '../database/Robot_req.json');
+
+  else if (message.indexOf('conta:') > 0)
+    robotMath(messageToRobot, '../database/Robot_math.json');
+
+  else
+    robotResponse(messageToRobot, '../database/Robot_res.json')
+
 }
 
-async function cleanAndCreate(send) {
+async function cleanCreateAndRemove(send) {
   const divMain = document.getElementById('divMain')
   divMain.insertAdjacentHTML("beforeend", '<div id="user"></div>');
   divMain.insertAdjacentHTML("beforeend", '<div id="robot"></div>');
   document.getElementById('userSend').value = "";
 
 
-  const divUser        = document.getElementById('user');
-  const divRobot       = document.getElementById('robot');
-  divRobot.setAttribute('class', 'box-left');
+  const divUser = document.getElementById('user');
+  document.getElementById('robot').setAttribute('class', 'box-left');
   divUser.setAttribute("class", "box-right");
   divUser.innerHTML = send;
+  document.getElementById('user').removeAttribute('id');
 }
 
 // ----------------
 
-async function robotResponse(message) { // recebe o valor em array das resposta do robo
-  const robot = await startRobot('../database/Robot_res.json')
+async function robotResponse(message, database) { // recebe o valor em array das resposta do robo
+  const robot = await startRobot(database)
     .then(resolve => {
+      const response = document.getElementById('robot');
+      if (resolve[message] == undefined)
+        return response.innerHTML = 'Não entendi';
 
-      document.getElementById('robot').innerHTML = resolve[message];
+      response.innerHTML = resolve[message];
+      response.removeAttribute('id');
 
     })
     .catch(error => console.warn('failed connection', error))
 }
 
-//--------------------
 
-async function robotRequest(message) { // recebe o valor em array das perguntas do robo
-  const robot = await startRobot('../database/Robot_req.json')
+async function robotMath(message, database) {
+  const robot = await startRobot('../database/Robot_math.json')
     .then(resolve => {
-
-      document.getElementById('robot').innerHTML = resolve[message];
+      const response = document.getElementById('robot');
+      if (resolve[message] == undefined)
+        return response.innerHTML = 'Não entendi';
 
     })
-    .catch(error => console.warn('failed connection', error))
+    .catch(error => console.warn('Failed connection'))
 }
-
