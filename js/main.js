@@ -39,27 +39,28 @@ document.getElementById('send').onclick = async () => {
   const message = document.getElementById('userSend').value;
   const messageToRobot = message.toLowerCase().replace(/\s/g, '');
 
-  cleanCreateAndRemove(message);
+  createAndRemove(message);
 
   if (message.indexOf('?') > 0)
-    robotResponse(messageToRobot, '../database/Robot_req.json');
+    await robotResponse(messageToRobot, '../database/Robot_req.json');
 
   else if (message.indexOf('conta:') > 0)
-    robotMath(messageToRobot, '../database/Robot_math.json');
+    await robotMath(messageToRobot, '../database/Robot_math.json');
 
   else
-    robotResponse(messageToRobot, '../database/Robot_res.json')
+    await robotResponse(messageToRobot, '../database/Robot_res.json')
 
 }
+function createAndRemove(send) {
+  const divMain = document.getElementById('divMain');
+  const divUser = document.getElementById('user');
 
-async function cleanCreateAndRemove(send) {
-  const divMain = document.getElementById('divMain')
   divMain.insertAdjacentHTML("beforeend", '<div id="user"></div>');
   divMain.insertAdjacentHTML("beforeend", '<div id="robot"></div>');
   document.getElementById('userSend').value = "";
 
 
-  const divUser = document.getElementById('user');
+  
   document.getElementById('robot').setAttribute('class', 'box-left');
   divUser.setAttribute("class", "box-right");
   divUser.innerHTML = send;
