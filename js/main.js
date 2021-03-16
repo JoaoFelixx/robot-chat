@@ -39,7 +39,7 @@ document.getElementById('send').onclick = async () => {
   const message = document.getElementById('userSend').value;
   const messageToRobot = message.toLowerCase().replace(/\s/g, '');
 
-  createAndRemove(message);
+  create(message);
 
   if (message.indexOf('?') > 0)
     await robotResponse(messageToRobot, '../database/Robot_req.json');
@@ -51,20 +51,19 @@ document.getElementById('send').onclick = async () => {
     await robotResponse(messageToRobot, '../database/Robot_res.json')
 
 }
-function createAndRemove(send) {
+
+function create(send) {
   const divMain = document.getElementById('divMain');
-  const divUser = document.getElementById('user');
+  divMain.insertAdjacentHTML("beforeend", `<div class="box-right" id="user">${send}</div>`);
+  divMain.insertAdjacentHTML("beforeend", '<div class="box-left"  id="robot"></div>');
+  clear()
+  return true
+}
 
-  divMain.insertAdjacentHTML("beforeend", '<div id="user"></div>');
-  divMain.insertAdjacentHTML("beforeend", '<div id="robot"></div>');
-  document.getElementById('userSend').value = "";
-
-
-  
-  document.getElementById('robot').setAttribute('class', 'box-left');
-  divUser.setAttribute("class", "box-right");
-  divUser.innerHTML = send;
+function clear() {
   document.getElementById('user').removeAttribute('id');
+  document.getElementById('userSend').value = "";
+  return true
 }
 
 // ----------------
@@ -81,16 +80,4 @@ async function robotResponse(message, database) { // recebe o valor em array das
 
     })
     .catch(error => console.warn('failed connection', error))
-}
-
-
-async function robotMath(message, database) {
-  const robot = await startRobot('../database/Robot_math.json')
-    .then(resolve => {
-      const response = document.getElementById('robot');
-      if (resolve[message] == undefined)
-        return response.innerHTML = 'Não entendi';
-
-    })
-    .catch(error => console.warn('Failed connection'))
 }
