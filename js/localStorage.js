@@ -11,7 +11,7 @@ document.getElementById('next').onclick = () => {
   const name = document.getElementById('name').value;
   const age  = parseInt(document.getElementById('age').value);
 
-  typeof age == 'number' && name.length < 21 ? createUser(name,age) : alert('Preenha corretamente os campos !');
+  typeof age == 'number' && name.length < 21 ? createUser(name, age) : alert('Preenha corretamente os campos !');
 
 }
   

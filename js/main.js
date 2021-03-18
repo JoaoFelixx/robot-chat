@@ -17,12 +17,12 @@ window.onload = () => {
 
 async function connectionWithRobot(database) { // transforma o json em Array para interação com usuario
   try {
-    const acess = await fetch(database);
+    const acess  = await fetch(database);
     const result = await acess.json();
     return await result;
   }
   catch (error) {
-    throw console.error('Erro ao ler arquivo .json', error);
+    throw new Error('Erro ao ler arquivo .json', error);
   }
 
 }
@@ -35,32 +35,26 @@ async function startRobot(database) { // pega o array anterior por uma promise
 
 //----------------
 
-document.getElementById('send').onclick = async () => {
-  const message = document.getElementById('userSend').value;
+document.getElementById('send').onclick = async () => { // função que determina quem vai responder o usuario
+  const message        = document.getElementById('userSend').value;
   const messageToRobot = message.toLowerCase().replace(/\s/g, '');
 
-  create(message);
+  createElements(message);
 
-  if (message.indexOf('?') > 0)
-    await robotResponse(messageToRobot, '../database/Robot_req.json');
+  await message.indexOf('?') > 0 ? robotResponse(messageToRobot, '../database/Robot_req.json') : robotResponse(messageToRobot, '../database/Robot_res.json');
 
-  else if (message.indexOf('conta:') > 0)
-    await robotMath(messageToRobot, '../database/Robot_math.json');
-
-  else
-    await robotResponse(messageToRobot, '../database/Robot_res.json')
 
 }
 
-function create(send) {
+function createElements(send) {
   const divMain = document.getElementById('divMain');
   divMain.insertAdjacentHTML("beforeend", `<div class="box-right" id="user">${send}</div>`);
   divMain.insertAdjacentHTML("beforeend", '<div class="box-left"  id="robot"></div>');
-  clear()
+  RemoveElements()
   return true
 }
 
-function clear() {
+function RemoveElements() {
   document.getElementById('user').removeAttribute('id');
   document.getElementById('userSend').value = "";
   return true
@@ -69,7 +63,7 @@ function clear() {
 // ----------------
 
 async function robotResponse(message, database) { // recebe o valor em array das resposta do robo
-  const robot = await startRobot(database)
+  await startRobot(database)
     .then(resolve => {
       const response = document.getElementById('robot');
       if (resolve[message] == undefined)
