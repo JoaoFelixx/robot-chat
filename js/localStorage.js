@@ -42,5 +42,5 @@ function clearText() {
 }
 
 function meetNext() {
-  window.location.assign('/chat');
+  window.location.assign('./chat/index.html');
 }
