@@ -4,9 +4,8 @@ document.getElementById('goStraight').onclick = () => {
   meetNext()
 }
 
-form.addEventListener('submit', (event) => {
-  event.preventDefault();
-})
+form.addEventListener('submit', (event) => event.preventDefault())
+
 document.getElementById('next').onclick = () => {
   const name = document.getElementById('name').value;
   const age  = parseInt(document.getElementById('age').value);
@@ -15,8 +14,6 @@ document.getElementById('next').onclick = () => {
 
 }
   
-
-
 function createUser(name,age) {
   localStorage.setItem('username',name);
   localStorage.setItem('age',age);
