@@ -50,7 +50,7 @@ document.getElementById('send').onclick = () => {
   mySite.RemoveElements();
 
   if (message.indexOf('?') > 0) 
-    mySite.robotResponse(messageToRobot, '../../database/Robot_req.json');
+    mySite.robotResponse(messageToRobot, 'https://joaofelixx.github.io/database/Robot_req.json');
   else
-    mySite.robotResponse(messageToRobot, '../../database/Robot_res.json');
+    mySite.robotResponse(messageToRobot, 'https://joaofelixx.github.io/database/Robot_res.json');
 }
