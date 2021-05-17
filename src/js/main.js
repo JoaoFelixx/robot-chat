@@ -1,52 +1,56 @@
-window.onload = () => localStorage.getItem("username") ? welcome() : createUser();
+class Site {
 
-function welcome() {
-  document.getElementById('welcome').innerHTML = `Olá ${localStorage.getItem("username")} !`;
+  welcome() {
+    document.getElementById('welcome').innerHTML = `Olá ${localStorage.getItem("username")} !`;
+  }
+
+  createUser() {
+    let name = prompt('Digite seu nome !');
+    name == null || name == '' ? name = 'Usuario' : true;
+    localStorage.setItem("username", name);
+    document.getElementById('welcome').innerHTML = `Olá ${localStorage.getItem("username")}`;
+  }
+
+  createMessagesInTheScreen(divMain, send) {
+    divMain.insertAdjacentHTML("beforeend", `<div class="box-right" id="user">${send}</div>`);
+    divMain.insertAdjacentHTML("beforeend", '<div class="box-left"  id="robot"></div>');
+  }
+
+  RemoveElements() {
+    document.getElementById('user').removeAttribute('id');
+    document.getElementById('userSend').value = "";
+  }
+
+  async robotResponse(message, database) {
+    await fetch(database)
+      .then(value => value.json())
+      .then(data => {
+        const response = document.getElementById('robot');
+        if (data[message] == undefined)
+          return response.innerHTML = 'Não entendi';
+
+        response.innerHTML = data[message];
+        response.removeAttribute('id');
+      })
+      .catch(err => {
+        console.warn(`Erro na conexão: ${err}`);
+      })
+  }
 }
 
-function createUser() {
-  let name = prompt('Digite seu nome !');
-  name == null || name == '' ? name = 'Usuario' : true;
-  localStorage.setItem("username", name);
-  document.getElementById('welcome').innerHTML = `Olá ${localStorage.getItem("username")}`;
-}
+const mySite = new Site();
 
-function RemoveElements() {
-  document.getElementById('user').removeAttribute('id');
-  document.getElementById('userSend').value = "";
-}
-
-function createMessagesInTheScreen(send) {
-  const divMain = document.getElementById('divMain');
-  divMain.insertAdjacentHTML("beforeend", `<div class="box-right" id="user">${send}</div>`);
-  divMain.insertAdjacentHTML("beforeend", '<div class="box-left"  id="robot"></div>');
-  RemoveElements()
-}
+window.onload = () => localStorage.getItem("username") ? mySite.welcome() : mySite.createUser();
 
 document.getElementById('send').onclick = () => {
-  const res = '../../database/Robot_res.json';
-  const req = '../../database/Robot_req.json';
   const message = document.getElementById('userSend').value;
   const messageToRobot = message.toLowerCase().replace(/\s/g, '');
-  createMessagesInTheScreen(message);
 
-  message.indexOf('?') > 0 ? robotResponse(messageToRobot, req) : robotResponse(messageToRobot, res);
-}
+  mySite.createMessagesInTheScreen(document.getElementById('divMain'), message);
+  mySite.RemoveElements();
 
-async function robotResponse(message, database) {
-  console.time()
-  try {
-    const connection = await fetch(database);
-    const json = await connection.json();
-    const response = document.getElementById('robot');
-    if (json[message] == undefined)
-      return response.innerHTML = 'Não entendi';
-
-    response.innerHTML = json[message];
-    response.removeAttribute('id');
-  }
-  catch (err) {
-    console.warn('erro:' + err)
-  }
-  console.timeEnd()
+  if (message.indexOf('?') > 0) 
+    mySite.robotResponse(messageToRobot, '../../database/Robot_req.json');
+  else
+    mySite.robotResponse(messageToRobot, '../../database/Robot_res.json');
 }
